@@ -97,12 +97,10 @@ class PhysicsPlaygroundView(arcade.View):
 
     def get_shapes_under_cursor(self):
             # Project cursor screen position into a world position
-            world_point = self.current_cursor_point
+            world_point = self.main_camera.unproject(self.current_cursor_point)
 
             # Get all shapes under the cursor
-            shapes_under_cursor = self.physics_engine.space.point_query((world_point[0], world_point[1]), 1.0, pymunk.ShapeFilter())
-
-            return shapes_under_cursor
+            return self.physics_engine.space.point_query((world_point[0], world_point[1]), 1.0, pymunk.ShapeFilter())
 
 
 def main():
