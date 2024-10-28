@@ -22,7 +22,7 @@ class PhysicsPlaygroundView(arcade.View):
         self.drag_shape_target = None
         self.dragging_camera = False
 
-        # Data attributes for cursor tracking
+        # Data attributes for cursor motion tracking
         self.current_cursor_point = (0.0, 0.0)
         self.previous_cursor_point = (0.0, 0.0)
 
@@ -83,11 +83,7 @@ class PhysicsPlaygroundView(arcade.View):
     def on_mouse_press(self, x, y, button, key_modifiers):
         # Left mouse button functionality
         if button == arcade.MOUSE_BUTTON_LEFT:
-            # Project cursor screen position into a world position
-            world_point = self.main_camera.unproject((x, y))
-
-            # Get all shapes under the cursor
-            shapes_under_cursor = self.physics_engine.space.point_query((world_point.x, world_point.y), 1.0, pymunk.ShapeFilter())
+            shapes_under_cursor = self.get_shapes_under_cursor()
             if len(shapes_under_cursor) > 0:
                 self.drag_shape_target = shapes_under_cursor[0]
             else:
@@ -98,6 +94,15 @@ class PhysicsPlaygroundView(arcade.View):
         if button == arcade.MOUSE_BUTTON_LEFT:
             self.drag_shape_target = None
             self.dragging_camera = False
+
+    def get_shapes_under_cursor(self):
+            # Project cursor screen position into a world position
+            world_point = self.current_cursor_point
+
+            # Get all shapes under the cursor
+            shapes_under_cursor = self.physics_engine.space.point_query((world_point[0], world_point[1]), 1.0, pymunk.ShapeFilter())
+
+            return shapes_under_cursor
 
 
 def main():
