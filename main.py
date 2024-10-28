@@ -47,6 +47,7 @@ class PhysicsPlaygroundView(arcade.View):
         self.physics_engine = PymunkPhysicsEngine(damping=0.75, gravity=(0.0, 0.0))
         self.physics_engine.add_sprite_list(self.sprite_list, mass=2, friction=0.75, damping=0.1, collision_type="BOX")
 
+        # Define a function to handle collisions between box sprites
         def box_collision_handler(a, b, arbiter, space, data):
             a_body = self.physics_engine.get_physics_object(a).body
             b_body = self.physics_engine.get_physics_object(b).body
@@ -55,6 +56,7 @@ class PhysicsPlaygroundView(arcade.View):
             if impact_score > 100.0:
                 print(f"{time.time()} Box collision! - {impact_score}")
 
+        # Register the collision handler function to apply to box on box collisions
         self.physics_engine.add_collision_handler("BOX", "BOX", post_handler=box_collision_handler)
 
     def on_resize(self, width, height):
