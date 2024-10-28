@@ -3,7 +3,10 @@ import arcade.sprite
 import arcade.sprite_list
 import arcade
 import random
+import pyglet.util
 import pymunk
+import time
+import pyglet
 from arcade.pymunk_physics_engine import PymunkPhysicsEngine
 
 WINDOW_WIDTH = 1024 # Initial width of window
@@ -42,7 +45,17 @@ class PhysicsPlaygroundView(arcade.View):
 
         # Add physics to sprites in sprite list
         self.physics_engine = PymunkPhysicsEngine(damping=0.75, gravity=(0.0, 0.0))
-        self.physics_engine.add_sprite_list(self.sprite_list, mass=2, friction=0.75, damping=0.1, collision_type="box")
+        self.physics_engine.add_sprite_list(self.sprite_list, mass=2, friction=0.75, damping=0.1, collision_type="BOX")
+
+        def box_collision_handler(a, b, arbiter, space, data):
+            a_body = self.physics_engine.get_physics_object(a).body
+            b_body = self.physics_engine.get_physics_object(b).body
+            relative_speed = pyglet.math.Vec2.length(a_body.velocity - b_body.velocity)
+            impact_score = (a_body.mass + b_body.mass) * relative_speed
+            if impact_score > 100.0:
+                print(f"{time.time()} Box collision! - {impact_score}")
+
+        self.physics_engine.add_collision_handler("BOX", "BOX", post_handler=box_collision_handler)
 
     def on_resize(self, width, height):
         # Make camera projection and viewport fit the new window size
